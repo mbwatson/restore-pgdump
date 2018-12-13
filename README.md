@@ -12,7 +12,7 @@ The solution is to spin up a Docker container running locally that contains a sn
 
 ## How?
 
-1. Dump the remote database contents.
+### 1. Export data
 
 Say the remote database you'd like to clone is accessible via ssh. Log into the remote machine and dump the data you're interested in.
 
@@ -39,9 +39,9 @@ This file sits in your home directory, waiting to be fetched. Back out on your l
 $ scp username@remote.host.com:/home/username /path/to/save/
 ```
 
-2. Put dumped data, `dump.sql` into this project's `./db` directory.
+### 2. Place data
 
-The structure of this repo should, then, look like the following.
+Move dumped data, `dump.sql`, into this project's `./db` directory. The structure of this repo should, then, look like the following.
 
 ```bash
 $ tree
@@ -56,11 +56,11 @@ $ tree
 └── README.md
 ```
 
-3. Credentials
+### 3. Credentials
 
-Put the database credentials into a `db.env` file. This file should lbasically look like the sample `db.env.sample` file. The `db.env` file is not tracked in version control. These credentials are located here, outside the `docker-compose.yml`, because this information will likely be shared across multiple services, minimizing repetition within that file.
+Put the database credentials--database name, user, and password, etc.--into a `db.env` file. This file should basically look like the sample `db.env.sample` file. The `db.env` file is not tracked in version control.
 
-Any other service requiring this information cna access it by the addition of 
+The database credentials are located here, outside the `docker-compose.yml`, because this information will likely be shared across multiple services, minimizing repetition within that file. Any other service requiring this information cna access it by the addition of 
 
 ```yaml
     env_file:
@@ -69,7 +69,7 @@ Any other service requiring this information cna access it by the addition of
 
 to the service block in the `docker-compose.yml` file.
 
-4. Build and spin up the container.
+### 4. Build and spin up the container.
 
 ```bash
 $ docker-compose up --build
@@ -79,7 +79,7 @@ Note we're using Docker Compose here. It's not necessary, as we could move the a
 
 However, if we're doing all this under the assumptions outlined at the beginning of this document, then we're going to orchesrate deployment of this database alongside some other service, like a frontend or API. Thus preparing for this with Docker Compose makes getting up and running quicker.
 
-### Some things
+## Some things
 
 The `init-user-db.sh` script is mounted as a volume in the container's `/docker-entrypoint-initdb.d/` directory so that it is executed automatically when postgres starts. The information in the main block of this script--the calls to `psql` can be customized to suit your situation. It maynot even be required in certain situations.
 
